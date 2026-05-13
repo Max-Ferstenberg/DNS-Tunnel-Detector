@@ -1,0 +1,37 @@
+services:
+  attacker:
+    build: .
+    container_name: dns-attacker
+    stdin_open: true
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    networks:
+      lab-network:
+        ipv4_address: 172.20.0.10
+    volumes:
+      - ./dns2tcpd-attacker.conf:/etc/dns2tcpd.conf
+
+  victim:
+    build: .
+    container_name: dns-victim
+    stdin_open: true
+    tty: true
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    networks:
+      lab-network:
+        ipv4_address: 172.20.0.20
+    volumes:
+      - ./dns2tcpd-victim.conf:/etc/dns2tcpc.conf
+
+networks:
+  lab-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
